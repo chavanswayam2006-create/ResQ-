@@ -66,7 +66,7 @@ def handle_incident(text, sector, hazard, people):
 
     # Fallback in rare case no route found
     if best_unit is None:
-        best_unit = list(city_sim.units.values())[0]
+        best_unit = candidate_units[0] if candidate_units else list(city_sim.units.values())[0]
         best_astar = astar_grid(city_sim.grid, best_unit["pos"], target_pos)
 
     # Step 7: Compare against unweighted BFS search (Lab 3)

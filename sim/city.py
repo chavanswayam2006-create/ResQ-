@@ -37,8 +37,16 @@ class CitySimulation:
     def get_sector_center(self, sector_name):
         sec = self.sectors.get(sector_name)
         if sec:
-            return sec["center"]
-        # Default fallback
+            r, c = sec["center"]
+            if self.grid[r][c] not in ("building", "blocked"):
+                return [r, c]
+            # Search within sector boundary for first passable tile
+            r_min, r_max = sec["r_range"]
+            c_min, c_max = sec["c_range"]
+            for nr in range(r_min, r_max + 1):
+                for nc in range(c_min, c_max + 1):
+                    if self.grid[nr][nc] not in ("building", "blocked"):
+                        return [nr, nc]
         return [3, 3]
 
     def add_incident(self, incident_data):

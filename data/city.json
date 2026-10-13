@@ -67,12 +67,12 @@
   ],
   "sectors": {
     "Sector A": {"id": "A", "r_range": [0, 2], "c_range": [0, 2], "center": [1, 1], "name": "North-West (Downtown)"},
-    "Sector B": {"id": "B", "r_range": [0, 2], "c_range": [3, 4], "center": [1, 3], "name": "North-Central (Civic)"},
+    "Sector B": {"id": "B", "r_range": [0, 2], "c_range": [3, 4], "center": [0, 3], "name": "North-Central (Civic)"},
     "Sector C": {"id": "C", "r_range": [0, 2], "c_range": [5, 7], "center": [1, 6], "name": "North-East (Suburbs)"},
     "Sector D": {"id": "D", "r_range": [3, 4], "c_range": [0, 2], "center": [3, 1], "name": "West Riverfront"},
     "Sector E": {"id": "E", "r_range": [3, 4], "c_range": [3, 4], "center": [3, 3], "name": "Central Crossing"},
     "Sector F": {"id": "F", "r_range": [3, 4], "c_range": [5, 7], "center": [3, 6], "name": "East Commercial"},
-    "Sector G": {"id": "G", "r_range": [5, 7], "c_range": [0, 2], "center": [6, 1], "name": "South-West (Harbor)"},
+    "Sector G": {"id": "G", "r_range": [5, 7], "c_range": [0, 2], "center": [5, 1], "name": "South-West (Harbor)"},
     "Sector H": {"id": "H", "r_range": [5, 7], "c_range": [3, 4], "center": [6, 3], "name": "South-Central (Rail)"},
     "Sector I": {"id": "I", "r_range": [5, 7], "c_range": [5, 7], "center": [6, 6], "name": "South-East (Industrial)"}
   }
