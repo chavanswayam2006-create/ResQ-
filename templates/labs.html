@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}ResQ-Grid — Lab Hub (1-10){% endblock %}
+
+{% block content %}
+<header class="top-bar">
+  <div class="top-bar-title">
+    <h1>AI & Soft-Computing Lab Catalog</h1>
+    <p>Ten Standalone Practical Modules with Visualizations, Code Mirrors, and Viva Q&A</p>
+  </div>
+  <a href="/" class="btn btn-outline-cyan">&larr; Return to Command Center</a>
+</header>
+
+<div class="labs-catalog">
+  {% for n, lab in labs.items() %}
+    <div class="lab-entry-card">
+      <div>
+        <span class="lab-badge">LAB {{ lab.num }}</span>
+        <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-main);">
+          {{ lab.title }}
+        </h2>
+        <div style="font-size: 0.78rem; color: var(--accent-cyan); font-weight: 600; margin-bottom: 0.5rem;">
+          {{ lab.subtitle }}
+        </div>
+        <p style="font-size: 0.83rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.25rem;">
+          {{ lab.aim }}
+        </p>
+      </div>
+      <a href="/lab/{{ n }}" class="btn btn-primary" style="justify-content: center; font-weight: 700;">
+        Open Lab {{ lab.num }} &rarr;
+      </a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

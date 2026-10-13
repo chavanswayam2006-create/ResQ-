@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ResQ-Grid — AI Emergency Response Simulator{% endblock %}</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Project Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Persistent Control Room Sidebar -->
+  <aside class="app-sidebar">
+    <a href="/" class="brand-logo">
+      <span>🚨</span>
+      <span>ResQ-Grid</span>
+      <span class="brand-badge">AI 2.0</span>
+    </a>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="/" class="{% if request.path == '/' %}active{% endif %}">
+          <span>📡</span> Command Center
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/intake" class="{% if request.path == '/intake' %}active{% endif %}">
+          <span>📥</span> Incident Intake
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/labs" class="{% if request.path.startswith('/lab') %}active{% endif %}">
+          <span>🧪</span> Lab Hub (1-10)
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div>Deterministic Seed: <strong style="color: var(--accent-cyan);">42</strong></div>
+      <div>City Topography: <strong>8x8 Grid</strong></div>
+      <div style="margin-top: 0.4rem; color: #5B6F94;">AI & Soft-Computing Viva Project</div>
+    </div>
+  </aside>
+
+  <!-- Dynamic Content Zone -->
+  <main class="app-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Project Application Scripts -->
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

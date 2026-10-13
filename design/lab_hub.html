@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQ-Grid — Lab Hub Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0B1220;
+      --panel-dark: #121A2B;
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text-main: #E6EDF7;
+      --text-muted: #8FA3BF;
+      --accent-red: #EF4444;
+      --accent-amber: #F59E0B;
+      --accent-green: #22C55E;
+      --accent-cyan: #22D3EE;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background: var(--panel-dark);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 2rem;
+    }
+    .nav-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .nav-link.active { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); }
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.75rem; font-weight: 700; }
+    .page-header p { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .lab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+    .lab-card {
+      background: var(--panel-dark);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .lab-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(34, 211, 238, 0.3);
+    }
+    .lab-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent-cyan);
+      background: rgba(34, 211, 238, 0.1);
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+    .lab-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+    .lab-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 1.25rem;
+    }
+    .btn-open-lab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-open-lab:hover {
+      background: var(--accent-cyan);
+      color: #0B1220;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo"><span>🚨</span> ResQ-Grid</div>
+    <ul class="nav-links">
+      <li><a href="/" class="nav-link"><span>📡</span> Command Center</a></li>
+      <li><a href="/intake" class="nav-link"><span>📥</span> Incident Intake</a></li>
+      <li><a href="/labs" class="nav-link active"><span>🧪</span> Lab Hub (1-10)</a></li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Emergency Intelligence Lab Hub</h1>
+      <p>Ten standalone AI & Soft-Computing practical modules. Inspect, execute, and verify viva concepts.</p>
+    </div>
+    <div class="lab-grid">
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 01</span>
+          <h2 class="lab-title">PEAS Agent</h2>
+          <p class="lab-desc">Formal specification of Performance, Environment, Actuators, Sensors and Problem Formulation.</p>
+        </div>
+        <a href="/lab/1" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 02</span>
+          <h2 class="lab-title">Prolog Rule Brain</h2>
+          <p class="lab-desc">First-order logic Horn clauses matching incident types to unit capability rules.</p>
+        </div>
+        <a href="/lab/2" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 03</span>
+          <h2 class="lab-title">BFS/DFS Scout</h2>
+          <p class="lab-desc">Uninformed search comparison on the 8x8 city grid evaluating path length and nodes expanded.</p>
+        </div>
+        <a href="/lab/3" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 04</span>
+          <h2 class="lab-title">A* Router & Puzzle</h2>
+          <p class="lab-desc">Informed Manhattan heuristic pathfinding on cost-aware grid tiles and classic 8-puzzle solver.</p>
+        </div>
+        <a href="/lab/4" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 05</span>
+          <h2 class="lab-title">Minimax Strategy</h2>
+          <p class="lab-desc">Adversarial game tree search between Disaster spread and Emergency Responder across city sectors.</p>
+        </div>
+        <a href="/lab/5" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 06</span>
+          <h2 class="lab-title">Fuzzy Urgency</h2>
+          <p class="lab-desc">Mamdani fuzzy inference controller mapping hazard intensity and people at risk to urgency score.</p>
+        </div>
+        <a href="/lab/6" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 07</span>
+          <h2 class="lab-title">Mamdani vs Sugeno</h2>
+          <p class="lab-desc">Comparative analysis of continuous centroid defuzzification versus Sugeno weighted average rules.</p>
+        </div>
+        <a href="/lab/7" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 08</span>
+          <h2 class="lab-title">Neuro-Fuzzy Predictor</h2>
+          <p class="lab-desc">Multi-Layer Perceptron trained on fuzzy history with output clamping and Mean Absolute Error eval.</p>
+        </div>
+        <a href="/lab/8" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 09</span>
+          <h2 class="lab-title">Neural Learning Rules</h2>
+          <p class="lab-desc">Scratch numpy Perceptron error learning for criticality and Winner-Takes-All clustering.</p>
+        </div>
+        <a href="/lab/9" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+      <div class="lab-card">
+        <div>
+          <span class="lab-num">LAB 10</span>
+          <h2 class="lab-title">Language Model Alerts</h2>
+          <p class="lab-desc">Unigram/Bigram/Trigram statistical language modeling for radio report completion and generation.</p>
+        </div>
+        <a href="/lab/10" class="btn-open-lab">Open Lab &rarr;</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

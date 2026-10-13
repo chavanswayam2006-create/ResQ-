@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}ResQ-Grid — Command Center{% endblock %}
+
+{% block content %}
+<header class="top-bar">
+  <div class="top-bar-title">
+    <h1>Command Center & City Grid</h1>
+    <p>Autonomous AI Emergency Dispatch, Multi-Incident Minimax & Dynamic Routing</p>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" id="btn-step">⚡ Step Sim</button>
+    <button class="btn" id="btn-autorun">▶ Auto-run</button>
+    <button class="btn btn-danger" id="btn-reset">↺ Reset</button>
+    <button class="btn btn-outline-cyan" id="btn-open-profile">📋 Agent Profile</button>
+  </div>
+</header>
+
+<div class="command-deck">
+  <!-- 8x8 City Grid Viewport -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span>🗺️</span> 8x8 City Topography & Fleet Radar
+      </div>
+      <div style="font-family: 'JetBrains Mono'; font-size: 0.8rem; color: var(--accent-cyan);">
+        5 Units Stationed • A* Nav Active
+      </div>
+    </div>
+    
+    <div class="city-viewport">
+      <div class="grid-board" id="grid-board">
+        <!-- 64 dynamic grid cells injected via app.js -->
+      </div>
+      
+      <div class="map-legend">
+        <div class="legend-item"><div class="legend-dot" style="background: #151F33; border: 1px solid #1E2B45;"></div> Road (1)</div>
+        <div class="legend-item"><div class="legend-dot" style="background: rgba(34, 211, 238, 0.4);"></div> Flooded (5)</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #252F44;"></div> Blocked</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #0D1524;"></div> Building</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--accent-green);"></div> Hospital (A1,A2)</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--accent-red);"></div> Fire Base (F1,F2)</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--accent-cyan);"></div> Boat Pier (B1)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Incident Priority Queue -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span>🚨</span> Incident Priority Queue
+      </div>
+      <a href="/intake" class="btn btn-primary" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">+ New Report</a>
+    </div>
+    
+    <div class="queue-container" id="queue-container">
+      <!-- Incident items rendered by app.js -->
+    </div>
+
+    <!-- Pattern Insights (Lab 09) -->
+    <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--panel-border);">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; margin-bottom: 0.4rem;">
+        Pattern Insights (Lab 09 Clusters)
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.25rem;">
+        <div>• <strong>P1 (Routine):</strong> Isolated trauma in residential downtown.</div>
+        <div>• <strong>P2 (Critical Blaze):</strong> Fast spreading structural fire.</div>
+        <div>• <strong>P3 (Inundation):</strong> Riverfront access crisis requiring boat.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Decision & Explanation Log -->
+  <div class="card" style="grid-column: span 2;">
+    <div class="card-header">
+      <div class="card-title">
+        <span>📜</span> AI Dispatch Decision & Explanation Log
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-muted);">
+        Chained AI Labs: Neuro-Fuzzy (08) &rarr; Perceptron (09) &rarr; Prolog (02) &rarr; A* (04) &rarr; Minimax (05)
+      </div>
+    </div>
+    
+    <div class="log-terminal" id="decision-log-list">
+      <!-- Log entries loaded by app.js -->
+    </div>
+  </div>
+</div>
+
+<!-- Lab 01 Agent Profile Modal -->
+<div class="modal-backdrop" id="profile-modal">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--accent-cyan);">Lab 01: PEAS Agent Profile & Problem Formulation</h2>
+      <button class="btn" id="btn-close-profile" style="padding: 0.25rem 0.6rem;">&times;</button>
+    </div>
+    <div style="font-size: 0.85rem; line-height: 1.6; display: flex; flex-direction: column; gap: 1rem;">
+      <div>
+        <h3 style="font-size: 0.9rem; color: var(--accent-amber); margin-bottom: 0.25rem;">1. Performance Measure</h3>
+        <p>Minimize response time to emergency sites, maximize casualty survival, and minimize vehicle transit wear across hazardous flooded terrain.</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; color: var(--accent-amber); margin-bottom: 0.25rem;">2. Environment</h3>
+        <p>8x8 discrete urban grid with impassable structural obstacles, normal roads (transit cost 1), and flooded streets (transit cost 5). Dynamic and partially observable.</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; color: var(--accent-amber); margin-bottom: 0.25rem;">3. Actuators</h3>
+        <p>dispatch_unit(vehicle_id, sector), move_unit(direction), reroute_unit(obstacle_cell).</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; color: var(--accent-amber); margin-bottom: 0.25rem;">4. Sensors</h3>
+        <p>Radio transcript parser (N-gram SLM), road transit cost sensors, and unit GPS transponders.</p>
+      </div>
+      <div>
+        <h3 style="font-size: 0.9rem; color: var(--accent-amber); margin-bottom: 0.25rem;">5. Problem Formulation</h3>
+        <p><strong>Initial State:</strong> Base station coords. <strong>Goal State:</strong> Target sector coordinate reached. <strong>Path Cost:</strong> Sum of grid cell weights.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script id="initial-state" type="application/json">{{ state | tojson }}</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const stateEl = document.getElementById("initial-state");
+    const initialState = stateEl ? JSON.parse(stateEl.textContent) : null;
+    initCommandCenter(initialState);
+  });
+</script>
+{% endblock %}

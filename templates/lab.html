@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}ResQ-Grid — Lab {{ lab.num }}: {{ lab.title }}{% endblock %}
+
+{% block content %}
+<header class="top-bar">
+  <div class="top-bar-title">
+    <div style="font-family: 'JetBrains Mono'; font-size: 0.8rem; color: var(--accent-cyan); font-weight: 700;">
+      PRACTICAL MODULE {{ lab.num }}
+    </div>
+    <h1>{{ lab.title }}</h1>
+    <p>{{ lab.subtitle }}</p>
+  </div>
+  <div class="btn-group">
+    <a href="/labs" class="btn btn-outline-cyan">&larr; Lab Catalog</a>
+    <a href="/" class="btn">Command Center</a>
+  </div>
+</header>
+
+<div style="display: flex; flex-direction: column; gap: 1rem; padding-top: 1rem;">
+  <!-- Collapsible Aim & Theory Box -->
+  <details class="theory-accordion" open>
+    <summary>📖 Aim & Theoretical Formulation</summary>
+    <div class="theory-accordion-body">
+      <div style="margin-bottom: 0.5rem;">
+        <strong style="color: var(--accent-amber);">Aim:</strong> {{ lab.aim }}
+      </div>
+      <div>
+        <strong style="color: var(--accent-cyan);">Theory:</strong> {{ lab.theory }}
+      </div>
+    </div>
+  </details>
+
+  <!-- Interactive Lab Workspace -->
+  <div class="lab-runner-layout">
+    <!-- Controls Panel (Left) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><span>⚙️</span> Interactive Controls</div>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div id="dynamic-inputs">
+          {% if lab_id == 2 %}
+            <div>
+              <label class="form-label" for="inp-query">Prolog Query Expression</label>
+              <select id="inp-query">
+                <option value="suitable(U, fire)" selected>suitable(U, fire)</option>
+                <option value="suitable(U, flood)">suitable(U, flood)</option>
+                <option value="suitable(U, medical)">suitable(U, medical)</option>
+                <option value="needs(K, T)">needs(K, T)</option>
+                <option value="unit(U, T)">unit(U, T)</option>
+              </select>
+            </div>
+          {% elif lab_id == 6 or lab_id == 8 %}
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div>
+                <label class="form-label" for="inp-hazard">Hazard Intensity (0 - 100)</label>
+                <input type="range" class="form-control" id="inp-hazard" min="0" max="100" value="75" style="padding: 0; accent-color: var(--accent-red);" oninput="document.getElementById('lbl-h').textContent = this.value">
+                <div style="text-align: right; font-family: 'JetBrains Mono'; color: var(--accent-red); font-size: 0.8rem;" id="lbl-h">75</div>
+              </div>
+              <div>
+                <label class="form-label" for="inp-people">People at Risk (0 - 100)</label>
+                <input type="range" class="form-control" id="inp-people" min="0" max="100" value="80" style="padding: 0; accent-color: var(--accent-amber);" oninput="document.getElementById('lbl-p').textContent = this.value">
+                <div style="text-align: right; font-family: 'JetBrains Mono'; color: var(--accent-amber); font-size: 0.8rem;" id="lbl-p">80</div>
+              </div>
+            </div>
+          {% elif lab_id == 10 %}
+            <div>
+              <label class="form-label" for="inp-seed">Prompt / Seed Words</label>
+              <input type="text" class="form-control" id="inp-seed" value="send fire" placeholder="e.g. fire reported">
+            </div>
+          {% else %}
+            <div style="font-size: 0.82rem; color: var(--text-muted);">
+              Standard deterministic parameters (seed 42, 8x8 disaster topology) pre-loaded for consistent lab viva demonstration.
+            </div>
+          {% endif %}
+        </div>
+
+        <button class="btn btn-primary" id="btn-run-lab" style="padding: 0.75rem; justify-content: center; font-weight: 700;">
+          ▶ Run Lab Demo
+        </button>
+      </div>
+    </div>
+
+    <!-- Output & Visualization (Right) -->
+    <div class="card" style="overflow: hidden;">
+      <div class="card-header">
+        <div class="card-title"><span>📊</span> Execution Output & Live Visualization</div>
+        <span class="brand-badge">Deterministic</span>
+      </div>
+
+      <!-- Chart Canvas Placeholder -->
+      <div style="background: #080E18; border: 1px solid var(--panel-border); border-radius: var(--radius-sm); padding: 1rem; min-height: 250px; display: flex; align-items: center; justify-content: center; position: relative;">
+        <canvas id="labChart" style="max-height: 240px;"></canvas>
+      </div>
+
+      <!-- Results Table / Code Container -->
+      <div style="margin-top: 1rem; background: #080E18; border: 1px solid var(--panel-border); border-radius: var(--radius-sm); padding: 0.85rem;" id="results-table-container">
+        <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Click "Run Lab Demo" to generate results.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Viva Quick Facts -->
+  <div class="viva-card">
+    <div class="viva-card-title">🎓 Viva Quick Facts & Examiner Discussion Questions</div>
+    <ul class="viva-list">
+      {% for q, a in lab.viva %}
+        <li>
+          <strong>Q: {{ q }}</strong><br>
+          <span style="color: #94A3B8;">&rarr; {{ a }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script id="lab-meta-data" type="application/json">{{ {"lab_id": lab_id} | tojson }}</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const metaEl = document.getElementById("lab-meta-data");
+    const meta = metaEl ? JSON.parse(metaEl.textContent) : { lab_id: 1 };
+    initLabRunner(meta.lab_id);
+  });
+</script>
+{% endblock %}

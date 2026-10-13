@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQ-Grid — Command Center Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0B1220;
+      --panel-dark: #121A2B;
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text-main: #E6EDF7;
+      --text-muted: #8FA3BF;
+      --accent-red: #EF4444;
+      --accent-amber: #F59E0B;
+      --accent-green: #22C55E;
+      --accent-cyan: #22D3EE;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background: var(--panel-dark);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 2rem;
+      letter-spacing: -0.01em;
+    }
+    .nav-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-link.active, .nav-link:hover {
+      background: rgba(34, 211, 238, 0.1);
+      color: var(--accent-cyan);
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--panel-dark);
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .top-bar-title h1 { font-size: 1.25rem; font-weight: 700; }
+    .top-bar-title p { font-size: 0.8rem; color: var(--text-muted); }
+    .btn-group { display: flex; gap: 0.5rem; }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--panel-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+    .btn:hover { background: rgba(255, 255, 255, 0.1); }
+    .btn-primary { background: var(--accent-cyan); color: #0B1220; border-color: var(--accent-cyan); }
+    .btn-primary:hover { background: #1cb5cc; }
+    .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border-color: var(--accent-red); }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.25); }
+    .dashboard-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      grid-template-rows: 1fr 200px;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      overflow: hidden;
+    }
+    .card {
+      background: var(--panel-dark);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .card-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .map-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+    }
+    .grid-8x8 {
+      display: grid;
+      grid-template-columns: repeat(8, 48px);
+      grid-template-rows: repeat(8, 48px);
+      gap: 3px;
+      background: #080E18;
+      padding: 6px;
+      border-radius: 8px;
+    }
+    .grid-cell {
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      position: relative;
+    }
+    .cell-road { background: #162032; }
+    .cell-flooded { background: rgba(34, 211, 238, 0.2); border: 1px solid rgba(34, 211, 238, 0.4); color: var(--accent-cyan); }
+    .cell-blocked { background: #2A364F; color: #5B6F94; }
+    .cell-building { background: #0E1624; border: 1px solid #1E293B; }
+    .cell-hospital { background: rgba(34, 197, 94, 0.2); border: 1px solid var(--accent-green); color: var(--accent-green); }
+    .cell-fire_station { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--accent-red); color: var(--accent-red); }
+    .queue-list { display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
+    .queue-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 0.75rem;
+    }
+    .queue-header { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.25rem; }
+    .progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    .progress-fill { height: 100%; border-radius: 3px; }
+    .log-box {
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      background: #080E18;
+      border-radius: 8px;
+      padding: 0.75rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .log-entry { display: flex; gap: 0.75rem; }
+    .log-time { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <span>🚨</span> ResQ-Grid
+    </div>
+    <ul class="nav-links">
+      <li><a href="/" class="nav-link active"><span>📡</span> Command Center</a></li>
+      <li><a href="/intake" class="nav-link"><span>📥</span> Incident Intake</a></li>
+      <li><a href="/labs" class="nav-link"><span>🧪</span> Lab Hub (1-10)</a></li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="top-bar-title">
+        <h1>Autonomous Emergency Grid</h1>
+        <p>Real-time AI Dispatch, Fuzzy Urgency & Pathfinding</p>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="btn-step">Step Sim</button>
+        <button class="btn" id="btn-autorun">Auto-run</button>
+        <button class="btn btn-danger" id="btn-reset">Reset</button>
+      </div>
+    </header>
+    <div class="dashboard-grid">
+      <div class="card">
+        <div class="card-title">
+          <span>City Map (8x8 Topology)</span>
+          <span style="font-family: 'JetBrains Mono'; color: var(--accent-cyan);">Units: 5 Active</span>
+        </div>
+        <div class="map-container">
+          <div class="grid-8x8" id="grid-map">
+            <!-- 64 cells generated dynamically -->
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span>Incident Queue</span>
+          <span class="badge" style="color: var(--accent-red);">2 Open</span>
+        </div>
+        <div class="queue-list" id="queue-list">
+          <div class="queue-item">
+            <div class="queue-header">
+              <strong>INC-101: West Fire</strong>
+              <span style="color: var(--accent-red); font-family: 'JetBrains Mono';">92.4%</span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Sector D • Fire Engine 1 Assigned</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 92.4%; background: var(--accent-red);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="grid-column: span 2;">
+        <div class="card-title">
+          <span>AI Decision & Explanation Log</span>
+          <span style="color: var(--text-muted); font-size: 0.75rem;">Seed 42 • Deterministic</span>
+        </div>
+        <div class="log-box" id="decision-log">
+          <div class="log-entry">
+            <span class="log-time">[00:00:01]</span>
+            <span>SYSTEM INITIALIZED: City topography loaded. 5 units stationed at base coordinates.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

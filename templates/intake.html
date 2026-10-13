@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}ResQ-Grid — Incident Intake{% endblock %}
+
+{% block content %}
+<header class="top-bar">
+  <div class="top-bar-title">
+    <h1>Incident Intake & Neural Dispatch</h1>
+    <p>Radio Transcript Autocomplete (Lab 10), Urgency Prediction (Lab 08), & Optimal Unit Routing (Lab 04)</p>
+  </div>
+  <a href="/" class="btn btn-outline-cyan">&larr; Return to Command Center</a>
+</header>
+
+<div style="padding: 1.5rem 2rem; max-width: 1100px; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+  <!-- Intake Form -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span>📥</span> Emergency Incident Report</div>
+    </div>
+    
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+      <div>
+        <label class="form-label" for="report-text">Radio Dispatch Message / Transcript (Markov Autocomplete)</label>
+        <textarea id="report-text" rows="3" placeholder="Type or click suggestions: e.g. fire reported near the market send fire truck to sector b">fire reported near market send</textarea>
+        <div class="chips-tray">
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Predict next:</span>
+          <div id="chips-tray" style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+            <!-- Autocomplete chips injected dynamically via app.js -->
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label" for="sector-select">Target City Sector</label>
+        <select id="sector-select">
+          {% for sec_name, sec_info in sectors.items() %}
+            <option value="{{ sec_name }}">{{ sec_name }} — {{ sec_info.name }} (Center [{{ sec_info.center[0] }}, {{ sec_info.center[1] }}])</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
+          <span style="font-weight: 600;">Hazard Intensity (0 - 100)</span>
+          <span id="hazard-val" class="slider-val-tag" style="color: var(--accent-red);">85</span>
+        </div>
+        <input type="range" class="form-control" id="hazard-slider" min="0" max="100" value="85" style="padding: 0; accent-color: var(--accent-red);">
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
+          <span style="font-weight: 600;">People at Risk (0 - 100)</span>
+          <span id="people-val" class="slider-val-tag" style="color: var(--accent-amber);">70</span>
+        </div>
+        <input type="range" class="form-control" id="people-slider" min="0" max="100" value="70" style="padding: 0; accent-color: var(--accent-amber);">
+      </div>
+
+      <button class="btn btn-primary" id="btn-dispatch" style="padding: 0.85rem; font-size: 0.95rem; justify-content: center; font-weight: 700;">
+        🚨 Dispatch Response Unit
+      </button>
+    </div>
+  </div>
+
+  <!-- Real-Time AI Decision Output Card -->
+  <div class="card" id="dispatch-results-card" style="display: flex;">
+    <div class="card-header">
+      <div class="card-title"><span>🤖</span> AI Decision & Allocation Report</div>
+      <span class="brand-badge">Pipeline Active</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <span class="badge" id="res-badge-type" style="padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: 700; background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan);">
+          FIRE INCIDENT
+        </span>
+        <span class="badge" id="res-badge-critical" style="padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: 700; background: rgba(239, 68, 68, 0.2); color: var(--accent-red);">
+          CRITICAL (PERCEPTRON)
+        </span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div style="background: #080E18; border: 1px solid var(--panel-border); border-radius: 8px; padding: 0.85rem; text-align: center;">
+          <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Neuro-Fuzzy Urgency</div>
+          <div id="res-urgency-val" style="font-family: 'JetBrains Mono'; font-size: 1.5rem; font-weight: 700; color: var(--accent-red); margin-top: 0.2rem;">
+            88.2%
+          </div>
+        </div>
+
+        <div style="background: #080E18; border: 1px solid var(--panel-border); border-radius: 8px; padding: 0.85rem; text-align: center;">
+          <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Assigned Unit (Prolog)</div>
+          <div id="res-unit-val" style="font-family: 'JetBrains Mono'; font-size: 1.15rem; font-weight: 700; color: var(--accent-green); margin-top: 0.35rem;">
+            F1 (Engine 1)
+          </div>
+        </div>
+
+        <div style="background: #080E18; border: 1px solid var(--panel-border); border-radius: 8px; padding: 0.85rem; text-align: center;">
+          <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">A* Terrain Route</div>
+          <div id="res-astar-val" style="font-family: 'JetBrains Mono'; font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan); margin-top: 0.3rem;">
+            6 Hops (Cost 6)
+          </div>
+        </div>
+
+        <div style="background: #080E18; border: 1px solid var(--panel-border); border-radius: 8px; padding: 0.85rem; text-align: center;">
+          <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">BFS Unweighted Baseline</div>
+          <div id="res-bfs-val" style="font-family: 'JetBrains Mono'; font-size: 1.05rem; font-weight: 700; color: var(--text-muted); margin-top: 0.3rem;">
+            6 Hops (Fewest Blocks)
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #080E18; border: 1px solid var(--panel-border); border-radius: 8px; padding: 0.85rem;">
+        <div style="font-size: 0.75rem; color: var(--accent-amber); font-weight: 700; text-transform: uppercase; margin-bottom: 0.25rem;">
+          Minimax Adversarial Strategy Recommendation (Lab 05)
+        </div>
+        <div id="res-minimax-desc" style="font-size: 0.82rem; color: var(--text-main); line-height: 1.4;">
+          Minimax Strategy evaluates adversarial disaster expansion and recommends priority containment for Sector B.
+        </div>
+      </div>
+
+      <div style="font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--panel-border); padding-top: 0.75rem;">
+        💡 Click <strong>"Return to Command Center"</strong> to observe unit vehicles actively navigating across the 8x8 city grid.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initIntake();
+  });
+</script>
+{% endblock %}

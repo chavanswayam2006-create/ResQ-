@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQ-Grid — Lab Detail Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0B1220;
+      --panel-dark: #121A2B;
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text-main: #E6EDF7;
+      --text-muted: #8FA3BF;
+      --accent-red: #EF4444;
+      --accent-amber: #F59E0B;
+      --accent-green: #22C55E;
+      --accent-cyan: #22D3EE;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background: var(--panel-dark);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 2rem;
+    }
+    .nav-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .nav-link.active { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); }
+    .main-content {
+      flex: 1;
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .lab-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .lab-header h1 { font-size: 1.5rem; font-weight: 700; }
+    .lab-header p { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .theory-box {
+      background: var(--panel-dark);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+    }
+    .theory-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--accent-cyan);
+    }
+    .theory-body {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .lab-workspace {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1.25rem;
+    }
+    .card {
+      background: var(--panel-dark);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .btn-run {
+      background: var(--accent-cyan);
+      color: #0B1220;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-run:hover { background: #1bc4db; }
+    .chart-box {
+      background: #080E18;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      min-height: 240px;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .table-box {
+      background: #080E18;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+    th, td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    th { color: var(--text-muted); font-weight: 600; background: rgba(255, 255, 255, 0.02); }
+    td { font-family: 'JetBrains Mono', monospace; }
+    .viva-box {
+      background: var(--panel-dark);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+    .viva-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-amber);
+      margin-bottom: 0.75rem;
+    }
+    .viva-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .viva-item strong { color: var(--text-main); }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo"><span>🚨</span> ResQ-Grid</div>
+    <ul class="nav-links">
+      <li><a href="/" class="nav-link"><span>📡</span> Command Center</a></li>
+      <li><a href="/intake" class="nav-link"><span>📥</span> Incident Intake</a></li>
+      <li><a href="/labs" class="nav-link active"><span>🧪</span> Lab Hub (1-10)</a></li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <div class="lab-header">
+      <div>
+        <span style="font-family: 'JetBrains Mono'; font-size: 0.8rem; color: var(--accent-cyan);">PRACTICAL MODULE</span>
+        <h1 id="lab-title">Lab 06: Fuzzy Logic Urgency Controller</h1>
+        <p id="lab-subtitle">scikit-fuzzy control API with 9 Mamdani IF-THEN rules</p>
+      </div>
+      <a href="/labs" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">&larr; Back to Hub</a>
+    </div>
+
+    <details class="theory-box" open>
+      <summary class="theory-header">Aim & Theory Overview</summary>
+      <div class="theory-body" id="theory-content">
+        In disaster scenarios, reports are uncertain and qualitative (e.g. "heavy smoke", "several casualties"). A Fuzzy Logic Controller maps real-valued inputs through triangular membership functions to fuzzy linguistic variables, evaluates rule firing via Min-operator inference, and defuzzifies via Centroid to obtain a continuous dispatch urgency.
+      </div>
+    </details>
+
+    <div class="lab-workspace">
+      <div class="card" id="controls-panel">
+        <h3 style="font-size: 0.95rem; font-weight: 600;">Control Parameters</h3>
+        <div id="dynamic-inputs">
+          <!-- Dynamic lab controls -->
+        </div>
+        <button class="btn-run" id="btn-run-lab">Run Lab Demo</button>
+      </div>
+
+      <div class="card" style="overflow: hidden;">
+        <h3 style="font-size: 0.95rem; font-weight: 600;">Execution Output & Visualization</h3>
+        <div class="chart-box" id="chart-container">
+          <canvas id="labChart"></canvas>
+        </div>
+        <div class="table-box" id="results-table-container">
+          <table id="results-table">
+            <thead><tr><th>Metric</th><th>Value</th><th>Interpretation</th></tr></thead>
+            <tbody><tr><td>Urgency Score</td><td>84.5%</td><td>High Priority</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="viva-box">
+      <div class="viva-title">Viva Quick Facts & Examiner Questions</div>
+      <ul class="viva-list" id="viva-facts">
+        <li class="viva-item"><strong>Q1: Why use Fuzzy Logic over Boolean rules?</strong> Real-world disaster telemetry contains partial truths; Boolean thresholds cause sharp, brittle switching.</li>
+        <li class="viva-item"><strong>Q2: What is the defuzzification method used?</strong> Center of Gravity (Centroid) computes the center of mass of the combined output fuzzy set.</li>
+        <li class="viva-item"><strong>Q3: How many rules are evaluated?</strong> All 9 antecedent pairs ($3 \times 3$) fire concurrently in parallel.</li>
+      </ul>
+    </div>
+  </main>
+</body>
+</html>

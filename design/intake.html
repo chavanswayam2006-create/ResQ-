@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQ-Grid — Incident Intake Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0B1220;
+      --panel-dark: #121A2B;
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text-main: #E6EDF7;
+      --text-muted: #8FA3BF;
+      --accent-red: #EF4444;
+      --accent-amber: #F59E0B;
+      --accent-green: #22C55E;
+      --accent-cyan: #22D3EE;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background: var(--panel-dark);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 2rem;
+    }
+    .nav-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .nav-link.active { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+    }
+    .page-header { margin-bottom: 1.5rem; }
+    .page-header h1 { font-size: 1.5rem; font-weight: 700; }
+    .page-header p { font-size: 0.85rem; color: var(--text-muted); }
+    .intake-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      max-width: 1100px;
+    }
+    .card {
+      background: var(--panel-dark);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+    textarea, select, input[type="text"] {
+      background: #080E18;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      color: var(--text-main);
+      padding: 0.75rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+    textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+    .chips-row { display: flex; gap: 0.5rem; align-items: center; }
+    .chip {
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.3);
+      color: var(--accent-cyan);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover { background: rgba(34, 211, 238, 0.25); }
+    .slider-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-cyan);
+    }
+    .btn-dispatch {
+      background: var(--accent-cyan);
+      color: #0B1220;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-dispatch:hover { background: #1bc4db; transform: translateY(-1px); }
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .metric-box {
+      background: #080E18;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-top: 0.25rem;
+    }
+    .metric-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo"><span>🚨</span> ResQ-Grid</div>
+    <ul class="nav-links">
+      <li><a href="/" class="nav-link"><span>📡</span> Command Center</a></li>
+      <li><a href="/intake" class="nav-link active"><span>📥</span> Incident Intake</a></li>
+      <li><a href="/labs" class="nav-link"><span>🧪</span> Lab Hub (1-10)</a></li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Incident Intake & Neural Dispatch</h1>
+      <p>Report emergency events with SLM autocomplete, fuzzy urgency prediction, and A* unit assignment.</p>
+    </div>
+    <div class="intake-layout">
+      <div class="card">
+        <h2 style="font-size: 1.1rem; font-weight: 600;">Emergency Report Entry</h2>
+        <div class="form-group">
+          <label for="report-text">Radio Dispatch Message / Transcript</label>
+          <textarea id="report-text" rows="4" placeholder="e.g. fire reported near the market send fire truck to sector b"></textarea>
+          <div class="chips-row">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Predict next:</span>
+            <button class="chip">fire truck</button>
+            <button class="chip">sector b</button>
+            <button class="chip">immediately</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sector-select">Target City Sector</label>
+          <select id="sector-select">
+            <option value="Sector A">Sector A — North-West (Downtown)</option>
+            <option value="Sector B">Sector B — North-Central (Civic)</option>
+            <option value="Sector C">Sector C — North-East (Suburbs)</option>
+            <option value="Sector D">Sector D — West Riverfront</option>
+            <option value="Sector E">Sector E — Central Crossing</option>
+            <option value="Sector F">Sector F — East Commercial</option>
+            <option value="Sector G">Sector G — South-West (Harbor)</option>
+            <option value="Sector H">Sector H — South-Central (Rail)</option>
+            <option value="Sector I">Sector I — South-East (Industrial)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="slider-header">
+            <span>Hazard Intensity (0 - 100)</span>
+            <span id="hazard-val" style="font-family: 'JetBrains Mono'; color: var(--accent-red);">85</span>
+          </div>
+          <input type="range" id="hazard-slider" min="0" max="100" value="85">
+        </div>
+        <div class="form-group">
+          <div class="slider-header">
+            <span>People at Risk (0 - 100)</span>
+            <span id="people-val" style="font-family: 'JetBrains Mono'; color: var(--accent-amber);">60</span>
+          </div>
+          <input type="range" id="people-slider" min="0" max="100" value="60">
+        </div>
+        <button class="btn-dispatch" id="btn-submit-dispatch">Dispatch Response Unit</button>
+      </div>
+
+      <div class="card" id="dispatch-results">
+        <h2 style="font-size: 1.1rem; font-weight: 600;">Autonomous Dispatch Decision</h2>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="result-badge" style="background: rgba(239, 68, 68, 0.2); color: var(--accent-red);">CRITICAL INCIDENT</span>
+          <span class="result-badge" style="background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan);">FIRE TYPE DETECTED</span>
+        </div>
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="metric-label">Neuro-Fuzzy Urgency</div>
+            <div class="metric-val" style="color: var(--accent-red);">88.2%</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Assigned Unit</div>
+            <div class="metric-val">F1 (Engine)</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">A* Cost-Aware Route</div>
+            <div class="metric-val" style="color: var(--accent-green);">6 Tiles (Cost 6)</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">BFS Route Comparison</div>
+            <div class="metric-val" style="color: var(--text-muted);">6 Tiles (Hop Count)</div>
+          </div>
+        </div>
+        <div style="background: #080E18; border-radius: 8px; padding: 1rem; border: 1px solid var(--panel-border);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">MINIMAX ADVISORY</div>
+          <div style="font-size: 0.85rem; color: var(--text-main);">Sector D protected first (Max responder depth 3 evaluation prevents highest casualty spread).</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
