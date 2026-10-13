@@ -175,6 +175,44 @@ function initCommandCenter(initialState) {
     modalProfile?.classList.remove("open");
   });
 
+  // Quick dispatch presets
+  document.querySelectorAll(".btn-quick-inc").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const type = btn.dataset.type;
+      const sector = btn.dataset.sec;
+      let text = `urgent ${type} incident reported in ${sector}`;
+      let hazard = 75, people = 60;
+      if (type === "fire") {
+        text = "fire reported near market send fire truck to sector b";
+        hazard = 85; people = 70;
+      } else if (type === "flood") {
+        text = "heavy flood rising rapidly in sector d send rescue boat";
+        hazard = 75; people = 60;
+      } else {
+        text = "traffic collision injury in sector g send ambulance immediately";
+        hazard = 65; people = 50;
+      }
+      try {
+        const res = await fetch("/api/sim/incident", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, sector, hazard, people })
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+          updateView(data.city_state);
+          setTimeout(async () => {
+            const stepRes = await fetch("/api/sim/step", { method: "POST" });
+            const stepData = await stepRes.json();
+            if (stepData.status === "success") updateView(stepData.state);
+          }, 600);
+        }
+      } catch (e) {
+        console.error("Quick dispatch error:", e);
+      }
+    });
+  });
+
   renderGrid();
   renderQueue();
   renderLog();

@@ -47,18 +47,24 @@ def build_fuzzy_system():
     system = ctrl.ControlSystem(rules)
     return ctrl.ControlSystemSimulation(system)
 
-_sim = build_fuzzy_system() if HAS_SKFUZZY else None
+try:
+    _sim = build_fuzzy_system() if HAS_SKFUZZY else None
+except Exception:
+    _sim = None
 
 def fuzzy_urgency(hazard_val, people_val):
     # Step 5: Evaluate Mamdani centroid defuzzification
     h = max(0.0, min(100.0, float(hazard_val)))
     p = max(0.0, min(100.0, float(people_val)))
-    if HAS_SKFUZZY and _sim is not None:
-        _sim.input['hazard'] = h
-        _sim.input['people'] = p
-        _sim.compute()
-        return round(float(_sim.output['urgency']), 2)
-    # Pure numpy fallback if skfuzzy is missing
+    if _sim is not None:
+        try:
+            _sim.input['hazard'] = h
+            _sim.input['people'] = p
+            _sim.compute()
+            return round(float(_sim.output['urgency']), 2)
+        except Exception:
+            pass
+    # Pure numpy fallback with same triangular rule behavior
     h_norm, p_norm = h / 100.0, p / 100.0
     return round((0.45 * h_norm + 0.55 * p_norm) * 100.0, 2)
 
